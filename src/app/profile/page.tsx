@@ -97,6 +97,16 @@ export default function ProfilePage() {
             <Button type="submit" className="w-full">
               حفظ ومتابعة إلى اتفاقية السرية
             </Button>
+            <p className="text-center text-sm text-[var(--foreground-muted)]">
+              تسجيل مفتوح لبعض المستقلين — يمكنك{" "}
+              <button
+                type="button"
+                onClick={() => router.push("/nda")}
+                className="font-medium text-[var(--accent)] hover:underline"
+              >
+                تخطي والمتابعة إلى اتفاقية السرية
+              </button>
+            </p>
           </form>
         </Card>
       </main>

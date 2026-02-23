@@ -5,47 +5,15 @@ import Link from "next/link";
 import Header from "@/components/Header";
 import Card from "@/components/Card";
 import Button from "@/components/Button";
-
-const DUMMY_DETAILS: Record<string, {
-  title: string;
-  program: string;
-  status: string;
-  statusColor: string;
-  submittedAt: string;
-  problem: string;
-  solution: string;
-  stage: string;
-  teamSize: string;
-}> = {
-  "app-1": {
-    title: "منصة تتبع الحجاج الصحية",
-    program: "حاضنة الحج للصحة الرقمية",
-    status: "قيد المراجعة",
-    statusColor: "bg-amber-100 text-amber-800",
-    submittedAt: "2025-02-20",
-    problem: "صعوبة متابعة الحالة الصحية للحجاج في الوقت الفعلي وتنسيق الخدمات الطبية.",
-    solution: "منصة موحدة تربط الجهات الصحية بالحجاج مع لوحة تحكم وتنبيهات.",
-    stage: "نموذج أولي (MVP)",
-    teamSize: "5",
-  },
-  "app-2": {
-    title: "تطبيق توجيه الحشود",
-    program: "حلول إدارة الحشود",
-    status: "مقبول للمقابلة",
-    statusColor: "bg-green-100 text-green-800",
-    submittedAt: "2025-02-15",
-    problem: "ازدحام في نقاط محددة وعدم توزيع الحشود بشكل آمن.",
-    solution: "تطبيق يعتمد على تحليل البيانات والخرائط الحية لتوجيه الحجاج.",
-    stage: "نمو",
-    teamSize: "8",
-  },
-};
+import { getApplicationById, STATUS_CONFIG } from "@/data/applications";
 
 export default function ApplicationDetailsPage() {
   const params = useParams();
   const router = useRouter();
   const id = params.id as string;
-  const app = DUMMY_DETAILS[id] ?? DUMMY_DETAILS["app-1"];
+  const app = getApplicationById(id) ?? getApplicationById("app-1");
+
+  if (!app) return null;
 
   return (
     <div className="min-h-screen bg-[var(--background)]">
@@ -65,9 +33,9 @@ export default function ApplicationDetailsPage() {
             <p className="mt-1 text-[var(--foreground-muted)]">{app.program}</p>
           </div>
           <span
-            className={`rounded-full px-3 py-1.5 text-sm font-medium ${app.statusColor}`}
+            className={`rounded-full px-3 py-1.5 text-sm font-medium ${STATUS_CONFIG[app.status].color}`}
           >
-            {app.status}
+            {STATUS_CONFIG[app.status].label}
           </span>
         </div>
         <p className="text-sm text-[var(--foreground-muted)]">
@@ -92,12 +60,22 @@ export default function ApplicationDetailsPage() {
             </p>
           </Card>
           <Card>
+            <h3 className="font-semibold text-[var(--foreground)]">
+              حجم السوق
+            </h3>
+            <p className="mt-2 text-[var(--foreground-muted)] leading-relaxed">
+              {app.marketSize}
+            </p>
+          </Card>
+          <Card>
             <div className="grid gap-4 sm:grid-cols-2">
               <div>
                 <span className="text-sm text-[var(--foreground-muted)]">
                   مرحلة المشروع
                 </span>
-                <p className="font-medium text-[var(--foreground)]">{app.stage}</p>
+                <p className="font-medium text-[var(--foreground)]">
+                  {app.stage === "other" && app.stageOther ? app.stageOther : app.stage}
+                </p>
               </div>
               <div>
                 <span className="text-sm text-[var(--foreground-muted)]">
@@ -108,6 +86,49 @@ export default function ApplicationDetailsPage() {
                 </p>
               </div>
             </div>
+          </Card>
+          {(app.pitchDeckName || app.demoVideoName || app.prototypeLink) && (
+            <Card>
+              <h3 className="font-semibold text-[var(--foreground)]">
+                المرفقات
+              </h3>
+              <ul className="mt-3 space-y-2 text-sm">
+                {app.pitchDeckName && (
+                  <li className="flex items-center gap-2 text-[var(--foreground-muted)]">
+                    <span className="font-medium text-[var(--foreground)]">Pitch Deck (PDF):</span>
+                    {app.pitchDeckName}
+                  </li>
+                )}
+                {app.demoVideoName && (
+                  <li className="flex items-center gap-2 text-[var(--foreground-muted)]">
+                    <span className="font-medium text-[var(--foreground)]">Demo Video (MP4):</span>
+                    {app.demoVideoName}
+                  </li>
+                )}
+                {app.prototypeLink && (
+                  <li className="flex items-center gap-2">
+                    <span className="font-medium text-[var(--foreground)]">رابط النموذج:</span>
+                    <a
+                      href={app.prototypeLink}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-[var(--accent)] hover:underline"
+                    >
+                      {app.prototypeLink}
+                    </a>
+                  </li>
+                )}
+              </ul>
+            </Card>
+          )}
+
+          <Card>
+            <h3 className="font-semibold text-[var(--foreground)]">
+              ملاحظات اللجنة
+            </h3>
+            <p className="mt-2 text-[var(--foreground-muted)] leading-relaxed">
+              {app.committeeNotes ?? "لم تضف اللجنة ملاحظات بعد. ستظهر هنا الملاحظات من لوحة تحكم الإدارة بعد المراجعة."}
+            </p>
           </Card>
         </div>
 

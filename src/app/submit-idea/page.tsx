@@ -20,9 +20,14 @@ export default function SubmitIdeaPage() {
     title: "",
     problem: "",
     solution: "",
+    marketSize: "",
     stage: "",
     teamSize: "",
+    prototypeLink: "",
+    stageOther: "",
   });
+  const [pitchDeckFile, setPitchDeckFile] = useState<File | null>(null);
+  const [demoVideoFile, setDemoVideoFile] = useState<File | null>(null);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -94,6 +99,18 @@ export default function SubmitIdeaPage() {
                 required
               />
             </div>
+            <div>
+              <label className="mb-1.5 block text-sm font-medium text-[var(--foreground)]">
+                حجم السوق
+              </label>
+              <textarea
+                className="w-full rounded-lg border border-[var(--border)] bg-[var(--background-card)] px-3 py-2.5 text-[var(--foreground)] placeholder:text-[var(--foreground-muted)] focus:border-[var(--accent)] focus:outline-none focus:ring-1 focus:ring-[var(--accent)]"
+                rows={4}
+                value={form.marketSize}
+                onChange={(e) => setForm({ ...form, marketSize: e.target.value })}
+                placeholder="وصف حجم السوق المستهدف والفرصة..."
+              />
+            </div>
             <div className="grid gap-5 sm:grid-cols-2">
               <div>
                 <label className="mb-1.5 block text-sm font-medium text-[var(--foreground)]">
@@ -108,7 +125,22 @@ export default function SubmitIdeaPage() {
                   <option value="idea">فكرة</option>
                   <option value="mvp">نموذج أولي (MVP)</option>
                   <option value="growth">نمو</option>
+                  <option value="other">أخرى</option>
                 </select>
+                {form.stage === "other" && (
+                  <div className="mt-3">
+                    <label className="mb-1.5 block text-sm font-medium text-[var(--foreground)]">
+                      حدد المرحلة
+                    </label>
+                    <input
+                      type="text"
+                      value={form.stageOther}
+                      onChange={(e) => setForm({ ...form, stageOther: e.target.value })}
+                      placeholder="اكتب مرحلة المشروع..."
+                      className="w-full rounded-lg border border-[var(--border)] bg-[var(--background-card)] px-3 py-2.5 text-[var(--foreground)] placeholder:text-[var(--foreground-muted)] focus:border-[var(--accent)] focus:outline-none focus:ring-1 focus:ring-[var(--accent)]"
+                    />
+                  </div>
+                )}
               </div>
               <Input
                 label="حجم الفريق (تقريبي)"
@@ -116,6 +148,57 @@ export default function SubmitIdeaPage() {
                 onChange={(e) => setForm({ ...form, teamSize: e.target.value })}
                 placeholder="مثال: 5"
               />
+            </div>
+            <div className="rounded-xl border border-[var(--border)] bg-[var(--background)] p-5">
+              <h3 className="mb-4 text-base font-semibold text-[var(--foreground)]">
+                المرفقات
+              </h3>
+              <div className="space-y-5">
+                <div>
+                  <label className="mb-1.5 block text-sm font-medium text-[var(--foreground)]">
+                    رفع ملف Pitch Deck (PDF)
+                  </label>
+                  <input
+                    type="file"
+                    accept=".pdf,application/pdf"
+                    onChange={(e) => setPitchDeckFile(e.target.files?.[0] ?? null)}
+                    className="w-full rounded-lg border border-[var(--border)] bg-[var(--background-card)] px-3 py-2.5 text-sm text-[var(--foreground)] file:mr-4 file:rounded-lg file:border-0 file:bg-[var(--accent)] file:px-4 file:py-2 file:text-white file:transition file:hover:bg-[var(--accent-hover)]"
+                  />
+                  {pitchDeckFile && (
+                    <p className="mt-1.5 text-xs text-[var(--foreground-muted)]">
+                      المحدد: {pitchDeckFile.name}
+                    </p>
+                  )}
+                </div>
+                <div>
+                  <label className="mb-1.5 block text-sm font-medium text-[var(--foreground)]">
+                    رفع Demo Video (MP4)
+                  </label>
+                  <input
+                    type="file"
+                    accept=".mp4,video/mp4"
+                    onChange={(e) => setDemoVideoFile(e.target.files?.[0] ?? null)}
+                    className="w-full rounded-lg border border-[var(--border)] bg-[var(--background-card)] px-3 py-2.5 text-sm text-[var(--foreground)] file:mr-4 file:rounded-lg file:border-0 file:bg-[var(--accent)] file:px-4 file:py-2 file:text-white file:transition file:hover:bg-[var(--accent-hover)]"
+                  />
+                  {demoVideoFile && (
+                    <p className="mt-1.5 text-xs text-[var(--foreground-muted)]">
+                      المحدد: {demoVideoFile.name}
+                    </p>
+                  )}
+                </div>
+                <div>
+                  <label className="mb-1.5 block text-sm font-medium text-[var(--foreground)]">
+                    رابط النموذج (Prototype Link)
+                  </label>
+                  <input
+                    type="url"
+                    value={form.prototypeLink}
+                    onChange={(e) => setForm({ ...form, prototypeLink: e.target.value })}
+                    placeholder="https://..."
+                    className="w-full rounded-lg border border-[var(--border)] bg-[var(--background-card)] px-3 py-2.5 text-[var(--foreground)] placeholder:text-[var(--foreground-muted)] focus:border-[var(--accent)] focus:outline-none focus:ring-1 focus:ring-[var(--accent)]"
+                  />
+                </div>
+              </div>
             </div>
             <Button type="submit" className="w-full">
               إرسال الطلب
