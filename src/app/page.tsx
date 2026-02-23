@@ -8,7 +8,7 @@ export default function Home() {
       <main className="mx-auto max-w-6xl px-4 py-16">
         <section className="rounded-2xl bg-[var(--beige)] p-12 text-center md:p-16">
           <h1 className="text-3xl font-bold text-[var(--foreground)] md:text-4xl lg:text-5xl">
-            بوابة برامج الابتكار في قطاع الحج
+                        استدام (حاضنة اعمال لخدمة ضيوف الرحمن)
           </h1>
           <p className="mx-auto mt-6 max-w-2xl text-lg text-[var(--foreground-muted)]">
             منصة رقمية لإدارة برامج الابتكار والحاضنات المتخصصة في قطاع الحج. قدّم مشروعك،
