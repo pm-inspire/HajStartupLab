@@ -35,6 +35,25 @@ export default function AdminApplicationDetailPage({
   // Weights State (Management of Matrix Criteria)
   const [criteria, setCriteria] = useState(DEFAULT_CRITERIA);
 
+    // Committee Management
+  const ALL_COMMITTEES = [
+    { id: "health", name: "اللجنة الصحية" },
+    { id: "tech", name: "اللجنة التقنية" },
+    { id: "finance", name: "اللجنة المالية" },
+    { id: "ux", name: "لجنة تجربة المستخدم" }
+  ];
+  const [selectedCommittees, setSelectedCommittees] = useState<string[]>(["health", "tech"]);
+  const toggleCommittee = (id: string) => {
+    setSelectedCommittees(prev => 
+      prev.includes(id) ? prev.filter(c => c !== id) : [...prev, id]
+    );
+  };
+  const committeeResults = [
+    { id: "health", status: "completed", score: 85, evaluator: "د. أحمد علي" },
+    { id: "tech", status: "completed", score: 92, evaluator: "م. سارة خالد" },
+    { id: "finance", status: "pending", score: 0, evaluator: "-" }
+  ];
+
   if (!appData) {
     return (
       <div className="min-h-screen bg-[var(--background)]">
@@ -253,6 +272,62 @@ export default function AdminApplicationDetailPage({
                         </div>
                       </div>
                     </div>
+                    
+              {/* Committee Assignment Section */}
+              <div className="rounded-xl border border-[var(--border)] bg-[var(--background)] p-6 shadow-sm">
+                <h4 className="font-bold mb-4 text-[var(--foreground)]">تعيين لجان التقييم</h4>
+                <p className="text-xs text-[var(--foreground-muted)] mb-4">حدد اللجان المسؤولة عن تقييم هذا الطلب.</p>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-4">
+                  {ALL_COMMITTEES.map(committee => (
+                    <label key={committee.id} className="flex items-center gap-3 p-3 rounded-lg border border-[var(--border)] cursor-pointer hover:bg-[var(--border)]/10 transition">
+                      <input 
+                        type="checkbox" 
+                        checked={selectedCommittees.includes(committee.id)}
+                        onChange={() => toggleCommittee(committee.id)}
+                        className="w-4 h-4 accent-[var(--accent)]"
+                      />
+                      <span className="text-sm font-medium">{committee.name}</span>
+                    </label>
+                  ))}
+                </div>
+                <button onClick={handleSave} className="w-full bg-[var(--accent)] text-white py-2 rounded-lg text-sm font-bold hover:opacity-90">
+                  حفظ تعيينات اللجان
+                </button>
+              </div>
+
+              {/* Committee Results Section */}
+              <div className="rounded-xl border border-[var(--border)] bg-[var(--background)] p-6 shadow-sm">
+                <h4 className="font-bold mb-4 text-[var(--foreground)]">نتائج تقييم اللجان</h4>
+                <p className="text-xs text-[var(--foreground-muted)] mb-4">عرض تقييمات اللجان المعيّنة لهذا الطلب.</p>
+                <div className="overflow-x-auto">
+                  <table className="w-full text-right text-sm">
+                    <thead className="bg-[var(--border)]/30 text-[var(--foreground)]">
+                      <tr>
+                        <th className="p-3 font-bold">اللجنة</th>
+                        <th className="p-3 font-bold">المقيّم</th>
+                        <th className="p-3 font-bold">الحالة</th>
+                        <th className="p-3 font-bold">الدرجة</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-[var(--border)]">
+                      {committeeResults.map(res => (
+                        <tr key={res.id}>
+                          <td className="p-3 font-medium">{ALL_COMMITTEES.find(c => c.id === res.id)?.name}</td>
+                          <td className="p-3 text-[var(--foreground-muted)]">{res.evaluator}</td>
+                          <td className="p-3">
+                            <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-bold ${res.status === 'completed' ? 'bg-emerald-100 text-emerald-700' : 'bg-amber-100 text-amber-700'}`}>
+                              {res.status === 'completed' ? 'تم التقييم' : 'قيد الانتظار'}
+                            </span>
+                          </td>
+                          <td className="p-3 font-bold text-[var(--accent)]">
+                            {res.status === 'completed' ? `${res.score}/100` : '-'}
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
                   </div>
                 )}
 
@@ -319,3 +394,4 @@ export default function AdminApplicationDetailPage({
     </div>
   );
 }
+
