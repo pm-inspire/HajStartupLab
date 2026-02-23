@@ -78,7 +78,7 @@ export default function Home() {
         </section>
 
         <footer className="mt-20 border-t border-[var(--border)] py-8 text-center text-sm text-[var(--foreground-muted)]">
-          بوابة برامج الابتكار في قطاع الحج — متوافق مع أنظمة حماية البيانات (PDPL)
+                    بوابة استدام — متوافق مع أنظمة حماية البيانات (PDPL)
         </footer>
       </main>
     </div>
