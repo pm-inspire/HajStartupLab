@@ -28,6 +28,12 @@ export default function Header() {
           >
             إنشاء حساب
           </Link>
+                    <Link
+            href="/admin"
+            className="rounded-lg border border-[var(--border)] bg-[var(--background-card)] px-4 py-2 text-sm font-medium text-[var(--foreground)] transition hover:bg-[var(--beige)]"
+          >
+            ⚙️ لوحة الإدارة
+          </Link>
         </nav>
       </div>
     </header>
