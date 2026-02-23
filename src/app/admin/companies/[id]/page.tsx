@@ -1,3 +1,6 @@
+"use client";
+
+import { use } from "react";
 import Link from "next/link";
 import Header from "@/components/Header";
 import { getCompanyById } from "@/data/companies";
@@ -5,9 +8,10 @@ import { getCompanyById } from "@/data/companies";
 export default function CompanyDetailPage({
   params,
 }: {
-  params: { id: string };
+  params: Promise<{ id: string }>;
 }) {
-  const company = getCompanyById(params.id);
+  const { id } = use(params);
+  const company = getCompanyById(id);
 
   if (!company) {
     return (
@@ -57,10 +61,9 @@ export default function CompanyDetailPage({
               <p className="font-semibold text-[var(--foreground)]">{company.createdAt}</p>
             </div>
           </div>
-
           <div className="border-t border-[var(--border)] pt-4 flex gap-3">
             <Link
-              href={`/admin/companies/${company.id}/requests`}
+              href={`/admin/companies/${id}/requests`}
               className="rounded-lg bg-[var(--accent)] px-4 py-2 text-sm font-medium text-white hover:opacity-90"
             >
               عرض طلبات الشركة

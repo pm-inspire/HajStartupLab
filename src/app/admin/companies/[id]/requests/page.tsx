@@ -1,3 +1,6 @@
+"use client";
+
+import { use } from "react";
 import Link from "next/link";
 import Header from "@/components/Header";
 import { getCompanyById, getRequestsByCompanyId } from "@/data/companies";
@@ -12,10 +15,11 @@ const STATUS_COLORS: Record<string, string> = {
 export default function CompanyRequestsPage({
   params,
 }: {
-  params: { id: string };
+  params: Promise<{ id: string }>;
 }) {
-  const company = getCompanyById(params.id);
-  const requests = getRequestsByCompanyId(params.id);
+  const { id } = use(params);
+  const company = getCompanyById(id);
+  const requests = getRequestsByCompanyId(id);
 
   return (
     <div className="min-h-screen bg-[var(--background)]">
@@ -31,16 +35,10 @@ export default function CompanyRequestsPage({
             </p>
           </div>
           <div className="flex gap-3">
-            <Link
-              href={`/admin/companies/${params.id}`}
-              className="text-sm text-[var(--foreground-muted)] hover:text-[var(--foreground)]"
-            >
+            <Link href={`/admin/companies/${id}`} className="text-sm text-[var(--foreground-muted)] hover:text-[var(--foreground)]">
               ← بيانات الشركة
             </Link>
-            <Link
-              href="/admin/companies"
-              className="text-sm text-[var(--foreground-muted)] hover:text-[var(--foreground)]"
-            >
+            <Link href="/admin/companies" className="text-sm text-[var(--foreground-muted)] hover:text-[var(--foreground)]">
               | قائمة الشركات
             </Link>
           </div>
