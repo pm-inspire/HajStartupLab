@@ -27,9 +27,13 @@ export default function AdminApplicationDetailPage({
   const [notes, setNotes] = useState(appData?.committeeNotes ?? "");
   const [saved, setSaved] = useState(false);
 
+  // Evaluation States
   const [blindReview, setBlindReview] = useState(appData?.evaluation?.blindReview ?? false);
   const [decision, setDecision] = useState<EvaluationDecision>(appData?.evaluation?.finalDecision ?? "pending");
   const [officialComment, setOfficialComment] = useState(appData?.evaluation?.officialComment ?? "");
+  
+  // Weights State (Management of Matrix Criteria)
+  const [criteria, setCriteria] = useState(DEFAULT_CRITERIA);
 
   if (!appData) {
     return (
@@ -48,6 +52,10 @@ export default function AdminApplicationDetailPage({
   const handleSave = () => {
     setSaved(true);
     setTimeout(() => setSaved(false), 3000);
+  };
+
+  const updateWeight = (id: string, newWeight: number) => {
+    setCriteria(prev => prev.map(c => c.id === id ? { ...c, weight: newWeight } : c));
   };
 
   const currentStatusConfig = STATUS_CONFIG[status];
@@ -165,7 +173,7 @@ export default function AdminApplicationDetailPage({
                           </tr>
                         </thead>
                         <tbody className="divide-y divide-[var(--border)] text-[var(--foreground-muted)]">
-                          {DEFAULT_CRITERIA.map(c => (
+                          {criteria.map(c => (
                             <tr key={c.id}>
                               <td className="p-4">
                                 <div className="font-medium text-[var(--foreground)]">{c.name}</div>
@@ -182,25 +190,66 @@ export default function AdminApplicationDetailPage({
                         </tbody>
                       </table>
                     </div>
+                    <button className="bg-[var(--accent)] text-white px-8 py-2 rounded-xl text-sm font-bold hover:opacity-90 transition">
+                      إرسال التقييم
+                    </button>
                   </div>
                 )}
 
                 {evalSubTab === "admin" && (
                   <div className="space-y-6">
-                    <div className="rounded-xl border border-dashed border-[var(--accent)] p-6 bg-[var(--accent)]/5">
-                      <h4 className="font-bold text-[var(--accent)] mb-4 flex items-center gap-2">⚙️ إعدادات المشرف لهذا الطلب</h4>
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <div className="space-y-2">
-                          <label className="text-xs font-bold text-[var(--foreground-muted)] uppercase">نظام المراجعة العمياء (Blind Review)</label>
-                          <div className="flex items-center gap-3">
-                            <button 
-                              onClick={() => setBlindReview(!blindReview)}
-                              className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${blindReview ? 'bg-[var(--accent)]' : 'bg-slate-300'}`}
-                            >
-                              <span className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${blindReview ? 'translate-x-6' : 'translate-x-1'}`} />
-                            </button>
-                            <span className="text-sm">{blindReview ? 'مفعّل' : 'معطّل'}</span>
+                    {/* Editable Matrix Section */}
+                    <div className="rounded-xl border border-[var(--border)] bg-[var(--background)] p-6 shadow-sm">
+                      <h4 className="font-bold mb-4 text-[var(--foreground)]">تعديل أوزان المعايير (Matrix)</h4>
+                      <p className="text-xs text-[var(--foreground-muted)] mb-6">يمكن للإدارة تعديل وزن كل معيار حسب أهميته لهذا المسار.</p>
+                      
+                      <div className="space-y-4">
+                        {criteria.map(c => (
+                          <div key={c.id} className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-4 rounded-lg border border-[var(--border)]">
+                            <div>
+                              <div className="text-sm font-bold">{c.name}</div>
+                              <div className="text-xs text-[var(--foreground-muted)]">{c.description}</div>
+                            </div>
+                            <div className="flex items-center gap-2">
+                              <span className="text-xs font-medium text-[var(--foreground-muted)]">الوزن:</span>
+                              <div className="flex items-center bg-[var(--border)]/30 rounded-lg overflow-hidden border border-[var(--border)]">
+                                <input 
+                                  type="number" 
+                                  value={c.weight} 
+                                  onChange={(e) => updateWeight(c.id, parseInt(e.target.value) || 0)}
+                                  className="w-16 bg-transparent px-3 py-1 text-sm font-bold focus:outline-none"
+                                />
+                                <span className="px-2 text-sm font-bold bg-[var(--border)]">%</span>
+                              </div>
+                            </div>
                           </div>
+                        ))}
+                      </div>
+                      
+                      <div className="mt-6 p-4 bg-slate-50 rounded-lg flex justify-between items-center">
+                        <span className="text-sm font-bold">إجمالي الأوزان:</span>
+                        <span className={`text-sm font-bold ${criteria.reduce((a,b) => a + b.weight, 0) === 100 ? 'text-emerald-600' : 'text-red-600'}`}>
+                          {criteria.reduce((a,b) => a + b.weight, 0)}%
+                        </span>
+                      </div>
+                      
+                      <button onClick={handleSave} className="mt-6 w-full bg-[var(--accent)] text-white py-2 rounded-lg text-sm font-bold hover:opacity-90">
+                        حفظ مصفوفة الأوزان
+                      </button>
+                    </div>
+
+                    <div className="rounded-xl border border-dashed border-[var(--accent)] p-6 bg-[var(--accent)]/5">
+                      <h4 className="font-bold text-[var(--accent)] mb-4 flex items-center gap-2">⚙️ إعدادات المشرف</h4>
+                      <div className="space-y-2">
+                        <label className="text-xs font-bold text-[var(--foreground-muted)] uppercase">نظام المراجعة العمياء (Blind Review)</label>
+                        <div className="flex items-center gap-3">
+                          <button 
+                            onClick={() => setBlindReview(!blindReview)}
+                            className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${blindReview ? 'bg-[var(--accent)]' : 'bg-slate-300'}`}
+                          >
+                            <span className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${blindReview ? 'translate-x-6' : 'translate-x-1'}`} />
+                          </button>
+                          <span className="text-sm">{blindReview ? 'مفعّل' : 'معطّل'}</span>
                         </div>
                       </div>
                     </div>
