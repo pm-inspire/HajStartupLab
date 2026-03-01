@@ -1,14 +1,15 @@
 "use client";
 
 import Link from "next/link";
-import Logo from '../logo.png'
+import Image from "next/image";
+import Logo from "../logo.png";
 
 export default function Header() {
   return (
     <header className="sticky top-0 z-50 border-b border-[var(--border)] bg-[var(--background-card)]/95 backdrop-blur">
       <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-4">
         <Link href="/" className="flex items-center gap-2">
-        <img src={Logo} />
+          <Image src={Logo} alt="Haj Portal" width={100} height={20} priority />
         </Link>
         <nav className="flex items-center gap-6">
           <Link
