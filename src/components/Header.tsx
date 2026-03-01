@@ -1,14 +1,14 @@
 "use client";
 
 import Link from "next/link";
+import logo from '../logo.png'
 
 export default function Header() {
   return (
     <header className="sticky top-0 z-50 border-b border-[var(--border)] bg-[var(--background-card)]/95 backdrop-blur">
       <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-4">
         <Link href="/" className="flex items-center gap-2">
-          <span className="text-xl font-bold text-[var(--accent)]">استدام</span>
-          <span className="text-xs text-[var(--foreground-muted)] hidden sm:block">بوابة الحج للابتكار</span>
+        <img src={logo} />
         </Link>
         <nav className="flex items-center gap-6">
           <Link
